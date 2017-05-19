@@ -18,8 +18,9 @@ rowboat: sgx wl12xx_compat
 CLEAN_RULE = sgx_clean wl12xx_compat_clean kernel_clean clean
 else
 ifeq ($(TARGET_PRODUCT), beagleboneblack)
-rowboat: sgx
-CLEAN_RULE = sgx_clean kernel_clean clean
+WILINK := wl18xx
+rowboat: sgx wl12xx_compat
+CLEAN_RULE = sgx_clean wl12xx_compat_clean kernel_clean clean
 else
 ifeq ($(TARGET_PRODUCT), beaglebone)
 rowboat: sgx

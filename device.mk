@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 
-
 PRODUCT_COPY_FILES := \
 	device/ti/beagleboneblack/init.am335xevm.rc:root/init.am335xevm.rc \
 	device/ti/beagleboneblack/init.am335xevm.usb.rc:root/init.am335xevm.usb.rc \
@@ -26,6 +25,19 @@ PRODUCT_COPY_FILES := \
 	device/ti/beagleboneblack/mixer_paths.xml:system/etc/mixer_paths.xml \
 	device/ti/beagleboneblack/audio_policy.conf:system/etc/audio_policy.conf
 
+# Bluetooth support
+PRODUCT_COPY_FILES += \
+	frameworks/native/data/etc/android.hardware.bluetooth.xml:system/etc/permissions/android.hardware.bluetooth.xml \
+	system/bluetooth/data/main.nonsmartphone.conf:system/etc/bluetooth/main.conf
+
+# WLAN station support
+PRODUCT_COPY_FILES += \
+	frameworks/native/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml
+
+# WLAN p2p support
+# TODO: hardware/libhardware_legacy/wifi/wifi.c needs to be patched in order to support p2p
+#PRODUCT_COPY_FILES += \
+#	frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml
 
 # KeyPads
 PRODUCT_COPY_FILES += \
@@ -58,10 +70,10 @@ PRODUCT_PACKAGES += \
 	libaudioutils
 
 PRODUCT_PACKAGES += \
-        audio.primary.beagleboneblack \
-        tinycap \
-        tinymix \
-        tinyplay
+	audio.primary.beagleboneblack \
+	tinycap \
+	tinymix \
+	tinyplay
 
 PRODUCT_PACKAGES += \
 	dhcpcd.conf
@@ -83,4 +95,22 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
 	camera.omap3
 
+# BT
+PRODUCT_PACKAGES += \
+	libbt-vendor \
+	uim-sysfs
+
+# Bluetooth A2DP
+PRODUCT_PACKAGES += \
+	audio.a2dp.default
+
+# WIFI
+PRODUCT_PROPERTY_OVERRIDES += \
+	wifi.interface=wlan0
+
+PRODUCT_PACKAGES += \
+	hostapd.conf
+
 $(call inherit-product, frameworks/native/build/tablet-dalvik-heap.mk)
+$(call inherit-product-if-exists, hardware/ti/wpan/wl12xx-bluetooth/wl12xx_bt_products.mk)
+$(call inherit-product-if-exists, hardware/ti/wlan/mac80211/firmware/wl12xx_wlan_fw_products.mk)
