@@ -27,8 +27,7 @@ PRODUCT_COPY_FILES := \
 
 # Bluetooth support
 PRODUCT_COPY_FILES += \
-	frameworks/native/data/etc/android.hardware.bluetooth.xml:system/etc/permissions/android.hardware.bluetooth.xml \
-	system/bluetooth/data/main.nonsmartphone.conf:system/etc/bluetooth/main.conf
+	frameworks/native/data/etc/android.hardware.bluetooth.xml:system/etc/permissions/android.hardware.bluetooth.xml
 
 # WLAN station support
 PRODUCT_COPY_FILES += \
