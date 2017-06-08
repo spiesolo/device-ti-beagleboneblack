@@ -1,0 +1,75 @@
+commit e6d278f1e377f5df0ded628cf77f14ecfed9861e
+Author: Yonghua Zheng <yonghua.zheng@esimtek.com>
+Date:   Thu Jun 8 14:46:44 2017 +0800
+
+    Provide backward compatible callstack apis
+    
+    In order to support running closed source libraries
+    or applications made for Android JB
+    
+    Change-Id: I7cb3f8223848f09fc910d232bd0aea47aa5ce6ac
+
+diff --git a/include/utils/CallStack.h b/include/utils/CallStack.h
+index 2056751..5a4fc12 100644
+--- a/include/utils/CallStack.h
++++ b/include/utils/CallStack.h
+@@ -66,7 +66,11 @@ public:
+     void clear();
+ 
+     // Immediately collect the stack traces for the specified thread.
+-    void update(int32_t ignoreDepth=1, int32_t maxDepth=MAX_DEPTH, pid_t tid=CURRENT_THREAD);
++    void update(int32_t ignoreDepth, int32_t maxDepth, pid_t tid);
++
++    // Backward compability with Android JB, for use with gralloc.omap3.so
++    // Which is NOT open source
++    void update(int32_t ignoreDepth=1, int32_t maxDepth=MAX_DEPTH);
+ 
+     // Dump a stack trace to the log using the supplied logtag.
+     void log(const char* logtag,
+@@ -76,6 +80,10 @@ public:
+     // Dump a stack trace to the specified file descriptor.
+     void dump(int fd, int indent = 0, const char* prefix = 0) const;
+ 
++    // Backward compability with Android JB, for use with gralloc.omap3.so
++    // Which is NOT open source
++    void dump(const char* prefix = 0) const;
++
+     // Return a string (possibly very long) containing the complete stack trace.
+     String8 toString(const char* prefix = 0) const;
+ 
+diff --git a/libutils/CallStack.cpp b/libutils/CallStack.cpp
+index 4ceaa7c..605adac 100644
+--- a/libutils/CallStack.cpp
++++ b/libutils/CallStack.cpp
+@@ -109,6 +109,10 @@ void CallStack::update(int32_t ignoreDepth, int32_t maxDepth, pid_t tid) {
+     mCount = count > 0 ? count : 0;
+ }
+ 
++void CallStack::update(int32_t ignoreDepth, int32_t maxDepth) {
++    update(ignoreDepth, maxDepth, CURRENT_THREAD);
++}
++
+ void CallStack::log(const char* logtag, android_LogPriority priority, const char* prefix) const {
+     LogPrinter printer(logtag, priority, prefix, /*ignoreBlankLines*/false);
+     print(printer);
+@@ -119,6 +123,20 @@ void CallStack::dump(int fd, int indent, const char* prefix) const {
+     print(printer);
+ }
+ 
++void CallStack::dump(const char* prefix) const {
++    backtrace_symbol_t symbols[mCount];
++
++    get_backtrace_symbols(mStack, mCount, symbols);
++    for (size_t i = 0; i < mCount; i++) {
++        char line[MAX_BACKTRACE_LINE_LENGTH];
++        format_backtrace_line(i, &mStack[i], &symbols[i],
++                line, MAX_BACKTRACE_LINE_LENGTH);
++        ALOGD("%s%s", prefix, line);
++    }
++    free_backtrace_symbols(symbols, mCount);
++}
++
++
+ String8 CallStack::toString(const char* prefix) const {
+     String8 str;
+ 
