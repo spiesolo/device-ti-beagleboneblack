@@ -87,6 +87,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
 	make_ext4fs
 
+PRODUCT_PACKAGES += \
+	fs_get_stats
+
 # Backlight HAL (liblights)
 PRODUCT_PACKAGES += \
 	lights.beagleboneblack
