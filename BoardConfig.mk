@@ -69,7 +69,10 @@ BOARD_WPA_SUPPLICANT_DRIVER      := NL80211
 BOARD_HOSTAPD_DRIVER             := NL80211
 BOARD_WLAN_DEVICE                := wl12xx_mac80211
 BOARD_SOFTAP_DEVICE              := wl12xx_mac80211
-WPA_SUPPLICANT_VERSION           := VER_0_8_X_TI
+#WPA_SUPPLICANT_VERSION           := VER_0_8_X_TI
+WPA_SUPPLICANT_VERSION           := VER_0_8_X
+BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_wl12xx
+BOARD_HOSTAPD_PRIVATE_LIB        := lib_driver_cmd_wl12xx
 
 WILINK := wl18xx
 ifeq ($(WILINK), wl18xx)
