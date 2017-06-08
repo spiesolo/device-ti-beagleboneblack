@@ -84,3 +84,8 @@ WIFI_FIRMWARE_LOADER             := ""
 COMMON_GLOBAL_CFLAGS += -DUSES_TI_MAC80211
 endif
 
+# libEGL: workaround for google bug 10194508
+# Some of the device's older blobs don't have EGL_KHL_gl_colorspace
+# extension and need this workaround, E.G. omap4/omap3
+COMMON_GLOBAL_CFLAGS += -DWORKAROUND_BUG_10194508=1
+BOARD_EGL_WORKAROUND_BUG_10194508 := true
